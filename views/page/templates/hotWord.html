@@ -1,0 +1,201 @@
+{% extends 'base_page.html' %}
+
+{% block title %}
+    热词统计页
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-md-12 mb-4 mt-1">
+         <div class="d-flex flex-wrap justify-content-between align-items-center">
+             <h4 class="font-weight-bold">热词统计页</h4>
+         </div>
+      </div>
+      <div class="col-lg-12">
+         <div class="card card-block card-stretch card-height">
+          <div class="card-body">
+                     <div class="collapse" id="form-element-15">
+                           <div class="card"><kbd class="bg-dark"><pre id="select-size" class="text-white"><code>
+&lt;div class="form-group"&gt;
+   &lt;label&gt;Small&lt;/label&gt;
+   &lt;select class="form-control form-control-sm mb-3"&gt;
+      &lt;option selected=""&gt;Open this select menu&lt;/option&gt;
+      &lt;option value="1"&gt;One&lt;/option&gt;
+      &lt;option value="2"&gt;Two&lt;/option&gt;
+      &lt;option value="3"&gt;Three&lt;/option&gt;
+   &lt;/select&gt;
+&lt;/div&gt;
+&lt;div class="form-group"&gt;
+   &lt;label&gt;Default&lt;/label&gt;
+   &lt;select class="form-control mb-3"&gt;
+      &lt;option selected=""&gt;Open this select menu&lt;/option&gt;
+      &lt;option value="1"&gt;One&lt;/option&gt;
+      &lt;option value="2"&gt;Two&lt;/option&gt;
+      &lt;option value="3"&gt;Three&lt;/option&gt;
+   &lt;/select&gt;
+&lt;/div&gt;
+&lt;div class="form-group"&gt;
+   &lt;label&gt;Large&lt;/label&gt;
+   &lt;select class="form-control form-control-lg"&gt;
+      &lt;option selected=""&gt;Open this select menu&lt;/option&gt;
+      &lt;option value="1"&gt;One&lt;/option&gt;
+      &lt;option value="2"&gt;Two&lt;/option&gt;
+      &lt;option value="3"&gt;Three&lt;/option&gt;
+   &lt;/select&gt;
+&lt;/div&gt;
+</code></pre></kbd></div>
+                        </div>
+
+                     <div class="form-group">
+                        <label>热词选择</label>
+                        <select  onchange="hotWordChange(event)"  class="form-control mb-3">
+                             {% for i in  hotWordList %}
+                                 {% if  defaultHotWord == i[0] %}
+                                          <option  selected value="{{ i[0] }}">{{ i[0] }}</option>
+                                 {% else %}
+                                         <option value="{{ i[0] }}">{{ i[0] }}</option>
+                                 {% endif %}
+
+                            {% endfor %}
+
+
+                        </select>
+                        <script>
+                            function hotWordChange(e){
+                                window.location.href = 'http://127.0.0.1:5000/page/hotWord?hotWord=' + e.target.value
+                            }
+                        </script>
+                     </div>
+
+                  </div>
+               </div>
+            </div>
+            <div class="card-body-list">
+               <ul class="list-style-3 mb-0">
+                   {% for i in commentsListCountTopFore %}
+                     <li class="p-3 list-item d-flex justify-content-start align-items-center">
+                     <div class="avatar">
+                        <p>
+                            🏵️ {{ i[5] }}
+                         </P>
+                         <p class="mb-0"style="color:#ccc;width:290px;overflow: hidden;text-overflow: ellipsis;white-space:nowrap">
+                             {{ i[4] }}
+                         </p>
+                     </div>
+                     <div class="list-style-action d-flex justify-content-end ml-auto">
+                        <h6 class="font-weight-bold">👍 {{ i[2] }}</h6>
+                     </div>
+                  </li>
+                   {% endfor %}
+
+
+               </ul>
+            </div>
+         </div>
+
+      </div>
+    <div class="row" style="justify-content: center">
+                <div class="col-md-6 col-xl-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 class="card-title font-size-16 mt-0">{{ defaultHotWord }}</h4>
+                                        </div>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">热词名称：{{ defaultHotWord }}</li>
+                                            <li class="list-group-item">出现次数：{{ hotWordLen }}次</li>
+                                            <li class="list-group-item">热词情感：{{ sentences }}</li>
+                                        </ul>
+                                    </div>
+
+                </div>
+        </div>
+                <div class="row">
+                  <div class="col-lg-12 col-md-12">
+         <div class="card card-block card-stretch card-height">
+            <div class="card-body p-10">
+                <h4 class="card-title font-size-16 mt-0">热词年份变化趋势</h4>
+
+                    <div id="main" style="width:100%;height:450px">
+
+                    </div>
+            </div>
+         </div>
+      </div>
+        </div>
+      </div>
+    <div>
+
+
+
+
+
+
+   </div>
+    <!-- Page end  -->
+</div>
+{% endblock %}
+
+{% block echarts %}
+    <script>
+
+    var chartDom = document.getElementById('main');
+    var myChart = echarts.init(chartDom);
+    var option;
+    option = {
+    title: {
+        text: '',
+        subtext: ''
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data: ['热词出现时间分布个数']
+    },
+    toolbox: {
+        show: true,
+        feature: {
+            dataView: {show: true, readOnly: false},
+            magicType: {show: true, type: ['line', 'bar']},
+            restore: {show: true},
+            saveAsImage: {show: true}
+        }
+    },
+    calculable: true,
+    xAxis: [
+        {
+            type: 'category',
+            data: ['2024.06.01', '2024.06.04', '2024.06.06', '2024.06.08', '2024.06.10', '2024.06.11', '2024.06.12', '2024.05.30.', '2024.05.27', '2024.05.21', '2024.05.23', '2024.05.25']
+        }
+    ],
+    yAxis: [
+        {
+            type: 'value'
+        }
+    ],
+    series: [
+        {
+            name: '热词数量',
+            type: 'bar',
+            data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
+            markPoint: {
+                data: [
+                    {type: 'max', name: '最大值'},
+                    {type: 'min', name: '最小值'}
+                ]
+            },
+            markLine: {
+                data: [
+                    {type: 'average', name: '平均值'}
+                ]
+            }
+        },
+
+    ]
+};
+
+    option && myChart.setOption(option);
+
+    </script>
+{% endblock %}
